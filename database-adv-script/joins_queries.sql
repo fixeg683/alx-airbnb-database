@@ -1,37 +1,45 @@
--- INNER JOIN: Retrieve all bookings and the respective users who made those bookings
-SELECT 
-    b.id AS booking_id,
-    u.id AS user_id,
-    u.name AS user_name,
-    b.start_date,
-    b.end_date
-FROM bookings b
-INNER JOIN users u ON b.user_id = u.id;
+-- Task 0: Write Complex Queries with Joins
 
--- LEFT JOIN: Retrieve all properties and their reviews, including those with no reviews
+-- 1️⃣ INNER JOIN: Retrieve all bookings and the respective users who made those bookings
 SELECT 
-    p.id AS property_id,
-    p.name AS property_name,
-    r.id AS review_id,
-    r.rating,
-    r.comment
-FROM properties p
-LEFT JOIN reviews r ON p.id = r.property_id;
+    bookings.id AS booking_id,
+    users.id AS user_id,
+    users.name AS user_name,
+    bookings.start_date,
+    bookings.end_date
+FROM bookings
+INNER JOIN users
+ON bookings.user_id = users.id;
 
--- FULL OUTER JOIN: Retrieve all users and all bookings (include unmatched records)
--- Note: If your DB (like MySQL) doesn’t support FULL OUTER JOIN, use UNION.
+-- 2️⃣ LEFT JOIN: Retrieve all properties and their reviews, including properties that have no reviews
 SELECT 
-    u.id AS user_id,
-    u.name AS user_name,
-    b.id AS booking_id,
-    b.start_date
-FROM users u
-LEFT JOIN bookings b ON u.id = b.user_id
+    properties.id AS property_id,
+    properties.name AS property_name,
+    reviews.id AS review_id,
+    reviews.rating,
+    reviews.comment
+FROM properties
+LEFT JOIN reviews
+ON properties.id = reviews.property_id;
+
+-- 3️⃣ FULL OUTER JOIN: Retrieve all users and all bookings, even if the user has no booking or a booking is not linked to a user
+-- (Use UNION because MySQL doesn’t support FULL OUTER JOIN)
+SELECT 
+    users.id AS user_id,
+    users.name AS user_name,
+    bookings.id AS booking_id,
+    bookings.start_date
+FROM users
+LEFT JOIN bookings
+ON users.id = bookings.user_id
+
 UNION
+
 SELECT 
-    u.id AS user_id,
-    u.name AS user_name,
-    b.id AS booking_id,
-    b.start_date
-FROM users u
-RIGHT JOIN bookings b ON u.id = b.user_id;
+    users.id AS user_id,
+    users.name AS user_name,
+    bookings.id AS booking_id,
+    bookings.start_date
+FROM users
+RIGHT JOIN bookings
+ON users.id = bookings.user_id;

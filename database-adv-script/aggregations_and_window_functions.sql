@@ -1,18 +1,24 @@
--- Aggregation: Total number of bookings per user
-SELECT 
-    u.id AS user_id,
-    u.name,
-    COUNT(b.id) AS total_bookings
-FROM users u
-LEFT JOIN bookings b ON u.id = b.user_id
-GROUP BY u.id, u.name;
+-- Task 2: Apply Aggregations and Window Functions
 
--- Window Function: Rank properties by total bookings
+-- 1️⃣ Aggregation Query: Find the total number of bookings made by each user
 SELECT 
-    p.id AS property_id,
-    p.name AS property_name,
-    COUNT(b.id) AS total_bookings,
-    RANK() OVER (ORDER BY COUNT(b.id) DESC) AS booking_rank
-FROM properties p
-LEFT JOIN bookings b ON p.id = b.property_id
-GROUP BY p.id, p.name;
+    users.id AS user_id,
+    users.name AS user_name,
+    COUNT(bookings.id) AS total_bookings
+FROM users
+LEFT JOIN bookings
+ON users.id = bookings.user_id
+GROUP BY users.id, users.name
+ORDER BY total_bookings DESC;
+
+-- 2️⃣ Window Function Query: Rank properties based on the total number of bookings they have received
+SELECT 
+    properties.id AS property_id,
+    properties.name AS property_name,
+    COUNT(bookings.id) AS total_bookings,
+    ROW_NUMBER() OVER (ORDER BY COUNT(bookings.id) DESC) AS row_number_rank
+FROM properties
+LEFT JOIN bookings
+ON properties.id = bookings.property_id
+GROUP BY properties.id, properties.name
+ORDER BY total_bookings DESC;
